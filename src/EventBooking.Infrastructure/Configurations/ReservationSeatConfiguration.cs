@@ -18,7 +18,7 @@ public class ReservationSeatConfiguration : IEntityTypeConfiguration<Reservation
         builder.HasOne(rs => rs.Reservation).WithMany(r => r.ReservedSeats).HasForeignKey("reservation_id").IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasOne<Seat>().WithMany().HasForeignKey(s => s.SeatId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Seat>().WithMany().HasForeignKey(s => s.SeatId).IsRequired().OnDelete(DeleteBehavior.Restrict);
         builder.Property(rs => rs.SeatId).HasColumnName("seat_id");
 
     }

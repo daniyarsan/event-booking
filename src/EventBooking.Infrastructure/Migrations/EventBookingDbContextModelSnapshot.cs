@@ -183,7 +183,7 @@ namespace EventBooking.Infrastructure.Migrations
                     b.HasOne("EventBooking.Domain.Venues.Seat", null)
                         .WithMany()
                         .HasForeignKey("SeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("EventBooking.Domain.Reservations.Reservation", "Reservation")

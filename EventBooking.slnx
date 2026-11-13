@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/EventBooking.Api/EventBooking.Api.csproj" />
+    <Project Path="src/EventBooking.Application/EventBooking.Application.csproj" />
+    <Project Path="src/EventBooking.Contracts/EventBooking.Contracts.csproj" />
     <Project Path="src/EventBooking.Domain/EventBooking.Domain.csproj" />
     <Project Path="src/EventBooking.Infrastructure/EventBooking.Infrastructure.csproj" />
   </Folder>

@@ -26,6 +26,13 @@ public class Reservation
         _reservationSeats = reservedSeats;
     }
 
+    public static Result<Reservation, Error> Create(Guid eventId, Guid userId, IEnumberable<Guid> seatsId) 
+    {
+        if (eventId == Guid.Empty)
+        {
+            return Error.Valid
+        }
+    }
     public ReservationId Id { get; private set; }
 
     public Guid EventId { get; private set; }

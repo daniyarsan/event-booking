@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
-
 using EventBooking.Domain.Venues;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace EventBooking.Infrastructure;
 
-public class EventBookingDbContext(string connectionString) : DbContext
+public class EventBookingDbContext(string connectionString, ILoggerFactory loggerFactory) : DbContext
 {
     public DbSet<Venue> Venues => Set<Venue>();
 
@@ -12,6 +12,9 @@ public class EventBookingDbContext(string connectionString) : DbContext
     {
         base.OnConfiguring(optionsBuilder);
         optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseLoggerFactory(loggerFactory);
+        optionsBuilder.EnableDetailedErrors();
+        optionsBuilder.EnableSensitiveDataLogging();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,19 +22,3 @@ public class EventBookingDbContext(string connectionString) : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(EventBookingDbContext).Assembly);
     }
 }
-
-public class VenueRepository(EventBookingDbContext dbContext)
-{
-    public async Task AddVenue(Venue venue)
-    {
-        await dbContext.Venues.AddAsync(venue);
-    }
-
-    public async Task<List<VenueDto>> GetVenues()
-    {
-        List<VenueDto> venues = await dbContext.Venues.Select(v => new VenueDto(v.Id.Value, v.Name.Name)).ToListAsync();
-        return venues;
-    }
-}
-
-public record VenueDto(Guid Id, string Name);

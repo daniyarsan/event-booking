@@ -27,6 +27,9 @@ public class Event
     public EventType Type { get; private set; }
     public IEventInfo EventInfo { get; set; }
     public EventDetails Details { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set; }
+    public EventStatus EventStatus { get; private set; }
 }
 
 public enum EventType
@@ -43,3 +46,11 @@ public interface IEventInfo
 public record ConcertInfo(string Performer) : IEventInfo;
 public record ConferenceInfo(string Speaker, string Topic) : IEventInfo;
 public record OnlineInfo(string Url) : IEventInfo;
+
+public enum EventStatus
+{
+    Planned,
+    InProgress,
+    Finished,
+    Cancelled
+}
