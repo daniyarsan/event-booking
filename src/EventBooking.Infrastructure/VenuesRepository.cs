@@ -1,5 +1,8 @@
+using CSharpFunctionalExtensions;
+
 using EventBooking.Application.Ports;
 using EventBooking.Application.Venues.GetAll;
+using EventBooking.Domain.Errors;
 using EventBooking.Domain.Reservations;
 using EventBooking.Domain.Venues;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +38,7 @@ public class VenuesRepository(EventBookingDbContext dbContext) : IVenueRepositor
             .Include(venue => venue.Seats)
             .SingleOrDefaultAsync(venue => venue.Id == venueId, cancellationToken);
     }
+    
 
     public Task<List<OneVenueResponse>> GetAllVenues(CancellationToken cancellationToken)
     {
@@ -109,10 +113,20 @@ public class VenuesRepository(EventBookingDbContext dbContext) : IVenueRepositor
         dbContext.Set<Seat>().RemoveRange(seats);
     }
 
+    public Task<int> RemoveVenue(VenueId venueId, CancellationToken cancellationToken)
+    {
+        return dbContext.Venues.Where(v => v.Id == venueId).ExecuteDeleteAsync(cancellationToken);
+    }
+
     public async Task<List<VenueDto>> GetVenues()
     {
         List<VenueDto> venues = await dbContext.Venues.Select(v => new VenueDto(v.Id.Value, v.Name.Name)).ToListAsync();
         return venues;
+    }
+
+    public Task<bool> HasEventAsync(VenueId venueId, CancellationToken cancellationToken)
+    {
+        return dbContext.Set<Seat>().AnyAsync(seat => seat.VenueId == venueId, cancellationToken);
     }
 }
 

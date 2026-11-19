@@ -114,6 +114,24 @@ public class Venue
 
         return AddSeats([seat]);
     }
+    
+    public UnitResult<Error> RemoveSeat(SeatId seatId)
+    {
+       var seat = _seats.SingleOrDefault(seat => seat.Id == seatId);
+       if (seat is null)
+       {
+           return Error.NotFound("venue.seats.notFound", "Seat not found");
+       }
+
+       if (_seats.Count <= 1)
+       {
+           return Error.NotFound("venue.seats_min_limit", "Seats count is less than 1");
+       }
+       
+       _seats.Remove(seat);
+       
+       return UnitResult.Success<Error>();
+    }
 
     public UnitResult<Error> ExpandSeatsLimit(int newSeatsLimit)
     {

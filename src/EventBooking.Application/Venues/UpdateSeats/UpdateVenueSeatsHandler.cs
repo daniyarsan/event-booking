@@ -1,15 +1,17 @@
 using CSharpFunctionalExtensions;
+
 using EventBooking.Application.Ports;
+using EventBooking.Application.Venues.Update;
 using EventBooking.Domain.Errors;
 using EventBooking.Domain.Venues;
 
-namespace EventBooking.Application.Venues.Update;
+namespace EventBooking.Application.Venues.UpdateSeats;
 
 public class UpdateVenueSeatsHandler(IVenueRepository venueRepository, ITransactionManager transactionManager)
 {
-    public async Task<UnitResult<Error>> Handle(UpdateVenueSeatsRequest request, CancellationToken cancellationToken)
+    public async Task<UnitResult<Error>> Handle(Guid id, UpdateVenueSeatsRequest request, CancellationToken cancellationToken)
     {
-        if (request.Seats is null || request.Seats.Count == 0)
+        if (request.Seats.Count == 0)
         {
             return Error.Validation("venue.seats", "A venue must have at least one seat");
         }
@@ -37,7 +39,7 @@ public class UpdateVenueSeatsHandler(IVenueRepository venueRepository, ITransact
         }
 
         await using var transaction = transactionResult.Value;
-        var venueId = new VenueId(request.VenueId);
+        var venueId = new VenueId(id);
         var seatsLimit = await venueRepository.GetSeatsLimitForUpdateAsync(venueId, cancellationToken);
         if (seatsLimit is null)
         {

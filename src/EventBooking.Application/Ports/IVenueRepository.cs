@@ -1,4 +1,7 @@
+using CSharpFunctionalExtensions;
+
 using EventBooking.Application.Venues.GetAll;
+using EventBooking.Domain.Errors;
 using EventBooking.Domain.Venues;
 
 namespace EventBooking.Application.Ports;
@@ -17,4 +20,6 @@ public interface IVenueRepository
     Task<List<SeatId>> GetReservedSeatIdsByVenueIdAsync(VenueId venueId, CancellationToken cancellationToken);
     void AddSeats(IEnumerable<Seat> seats);
     void RemoveSeats(IEnumerable<Seat> seats);
+    Task<int> RemoveVenue(VenueId venueId, CancellationToken cancellationToken);
+    Task<bool> HasEventAsync(VenueId venueId, CancellationToken cancellationToken);
 }

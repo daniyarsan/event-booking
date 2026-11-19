@@ -1,8 +1,11 @@
 using EventBooking.Application.Venues.AddSeats;
 using EventBooking.Application.Venues.Create;
+using EventBooking.Application.Venues.Delete;
+using EventBooking.Application.Venues.DeleteSeat;
 using EventBooking.Application.Venues.GetAll;
 using EventBooking.Application.Venues.GetById;
 using EventBooking.Application.Venues.Update;
+using EventBooking.Application.Venues.UpdateSeats;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +18,10 @@ public class VenueController(
     GetByIdVenueHandler getByIdVenueHandler,
     GetAllVenueHandler getAllVenueHandler,
     UpdateVenueHandler updateVenueHandler,
-    AddSeatsHandler addSeatsHandler
+    AddSeatsHandler addSeatsHandler,
+    UpdateVenueSeatsHandler updateVenueSeatsHandler,
+    DeleteVenueHandler deleteVenueHandler,
+    DeleteSeatHandler deleteSeatHandler
     
     ) : ControllerBase
 {
@@ -65,6 +71,35 @@ public class VenueController(
         CancellationToken cancellationToken)
     {
         var result = await addSeatsHandler.Handle(id, request, cancellationToken);
+        return EndpointResponse.From(this, result);
+    }
+    
+    [HttpPut("{id:guid}/seats")]
+    public async Task<IActionResult> UpdateSeats(
+        [FromRoute] Guid id,
+        [FromBody] UpdateVenueSeatsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var result = await updateVenueSeatsHandler.Handle(id, request, cancellationToken);
+        return EndpointResponse.From(this, result);
+    }
+    
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(
+        [FromRoute] Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await deleteVenueHandler.Handle(id, cancellationToken);
+        return EndpointResponse.From(this, result);
+    }    
+    
+    [HttpDelete("{venueId:guid}/seats/{seatId:guid}")]
+    public async Task<IActionResult> DeleteSeat(
+        [FromRoute] Guid venueId,
+        [FromRoute] Guid seatId,
+        CancellationToken cancellationToken)
+    {
+        var result = await deleteSeatHandler.Handle(venueId, seatId, cancellationToken);
         return EndpointResponse.From(this, result);
     }
 }

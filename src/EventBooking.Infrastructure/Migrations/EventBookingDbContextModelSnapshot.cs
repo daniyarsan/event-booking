@@ -165,7 +165,7 @@ namespace EventBooking.Infrastructure.Migrations
                     b.HasOne("EventBooking.Domain.Venues.Venue", null)
                         .WithMany()
                         .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

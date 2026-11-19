@@ -7,6 +7,7 @@ namespace EventBooking.Infrastructure;
 public class EventBookingDbContext(string connectionString, ILoggerFactory loggerFactory) : DbContext
 {
     public DbSet<Venue> Venues => Set<Venue>();
+    public DbSet<Seat> Seat => Set<Seat>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
