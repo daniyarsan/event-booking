@@ -38,7 +38,36 @@ public class VenuesRepository(EventBookingDbContext dbContext) : IVenueRepositor
             .Include(venue => venue.Seats)
             .SingleOrDefaultAsync(venue => venue.Id == venueId, cancellationToken);
     }
-    
+
+    public async Task<Venue?> GetVenueWithSeatsForLock(
+        VenueId venueId,
+        CancellationToken cancellationToken)
+    {
+        if (dbContext.Database.CurrentTransaction is null)
+        {
+            throw new InvalidOperationException(
+                "An active transaction is required.");
+        }
+        
+        var lockedIds = await dbContext.Database
+            .SqlQuery<Guid>($"""
+                             SELECT "Id" AS "Value"
+                             FROM venues
+                             WHERE "Id" = {venueId.Value}
+                             FOR UPDATE
+                             """)
+            .ToListAsync(cancellationToken);
+        
+        if (lockedIds.Count == 0) 
+            return null;
+
+        return await dbContext.Venues
+            .AsTracking()
+            .Include(venue => venue.Seats)
+            .SingleOrDefaultAsync(
+                venue => venue.Id == venueId,
+                cancellationToken);
+    }
 
     public Task<List<OneVenueResponse>> GetAllVenues(CancellationToken cancellationToken)
     {

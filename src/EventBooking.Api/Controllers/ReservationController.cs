@@ -1,4 +1,5 @@
 using EventBooking.Application.Reservations.Create;
+using EventBooking.Application.Reservations.Reserve;
 
 using Microsoft.AspNetCore.Mvc;
 

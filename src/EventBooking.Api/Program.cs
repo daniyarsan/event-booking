@@ -1,4 +1,5 @@
 using EventBooking.Application.Ports;
+using EventBooking.Application.Reservations.Reserve;
 using EventBooking.Application.Venues.AddSeats;
 using EventBooking.Application.Venues.Create;
 using EventBooking.Application.Venues.Delete;
@@ -7,6 +8,7 @@ using EventBooking.Application.Venues.GetAll;
 using EventBooking.Application.Venues.GetById;
 using EventBooking.Application.Venues.Update;
 using EventBooking.Application.Venues.UpdateSeats;
+using EventBooking.Domain.Reservations;
 using EventBooking.Infrastructure;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -28,6 +30,7 @@ builder.Services.AddScoped<UpdateVenueSeatsHandler>();
 builder.Services.AddScoped<DeleteVenueHandler>();
 builder.Services.AddScoped<DeleteSeatHandler>();
 builder.Services.AddScoped<AddSeatsHandler>();
+builder.Services.AddScoped<ReservationCreateHandler>();
 
 WebApplication app = builder.Build();
 

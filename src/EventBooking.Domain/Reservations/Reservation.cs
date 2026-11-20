@@ -1,6 +1,7 @@
 using CSharpFunctionalExtensions;
 
 using EventBooking.Domain.Errors;
+using EventBooking.Domain.Events;
 using EventBooking.Domain.Venues;
 
 namespace EventBooking.Domain.Reservations;
@@ -15,7 +16,7 @@ public class Reservation
     }
     private readonly List<ReservationSeat> _reservationSeats;
 
-    public Reservation(ReservationId id, IEnumerable<Guid> seatIds, Guid eventId, Guid userId)
+    public Reservation(ReservationId id, Guid eventId, Guid userId, IEnumerable<Guid> seatIds)
     {
         Id = id;
         Status = ReservationStatus.Pending;
@@ -24,7 +25,7 @@ public class Reservation
         UserId = userId;
 
         List<ReservationSeat> reservedSeats =
-            seatIds.Select(seatId => new ReservationSeat(new ReservationSeatId(Guid.NewGuid()), this, new SeatId(seatId))).ToList();
+            seatIds.Select(seatId => new ReservationSeat(new ReservationSeatId(Guid.NewGuid()), this, new SeatId(seatId), new EventId(eventId))).ToList();
 
         _reservationSeats = reservedSeats;
     }
@@ -51,9 +52,21 @@ public class Reservation
             return Error.Validation("reservation.userId", "User ID cannot be empty");
         }
 
-        var seatsIdList = seatsId.ToList() ?? [];
-        
-        
+        var seatsIdsList = seatsId.ToList() ?? [];
+
+        if (seatsIdsList.Count == 0)
+        {
+            return Error.Validation("reservation.seats", "At Least one seat must be selected");
+        }
+
+        if (seatsIdsList.Any(seatId => seatId == Guid.Empty))
+        {
+            return Error.Validation("reservation.seats", "Seat IDs cannot be empty");
+        }
+
+        return new Reservation(new ReservationId(Guid.NewGuid()), eventId, userId, seatsIdsList);
+
+
     }
 
 }

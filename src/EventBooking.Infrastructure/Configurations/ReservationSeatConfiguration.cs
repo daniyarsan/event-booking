@@ -15,11 +15,23 @@ public class ReservationSeatConfiguration : IEntityTypeConfiguration<Reservation
         builder.HasKey(rs => rs.Id).HasName("pk_reservation_seat");
         
         builder.Property(rs => rs.Id).HasConversion(rs => rs.Value, id => new ReservationSeatId(id)).HasColumnName("id");
-        builder.HasOne(rs => rs.Reservation).WithMany(r => r.ReservedSeats).HasForeignKey("reservation_id").IsRequired()
+        builder.HasOne(rs => rs.Reservation)
+            .WithMany(r => r.ReservedSeats)
+            .HasForeignKey("reservation_id")
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
         
-        builder.HasOne<Seat>().WithMany().HasForeignKey(s => s.SeatId).IsRequired().OnDelete(DeleteBehavior.Restrict);
-        builder.Property(rs => rs.SeatId).HasColumnName("seat_id");
+        builder.HasOne<Seat>()
+            .WithMany()
+            .HasForeignKey(s => s.SeatId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Property(rs => rs.ReservedAt).HasColumnName("reserved_at");
+        
+        builder.Property(rs => rs.SeatId).HasColumnName("seat_id").IsRequired();
+        builder.Property(rs => rs.EventId).HasColumnName("event_id").IsRequired();
 
+        builder.HasIndex(rs => new {rs.EventId, rs.SeatId}).IsUnique();
     }
 }
